@@ -16,8 +16,8 @@ jobs:
       - name: Run code quality checks
         run: |
           echo "Запуск проверок качества кода..."
-          # Проверяем, нет ли в коде запрещенного слова "HACK"
-          if grep -rnw . -e "HACK"; then
+          # Исключаем .git и .github, ищем только в файлах с исходным кодом
+          if grep -rnw --exclude-dir=.git --exclude-dir=.github --include=\*.{js,py,txt,css,md} . -e "HACK"; then
             echo "❌ Ошибка: Найдено запрещенное слово 'HACK'!"
             exit 1
           fi
