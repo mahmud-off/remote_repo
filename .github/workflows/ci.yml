@@ -1,0 +1,24 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run code quality checks
+        run: |
+          echo "Запуск проверок качества кода..."
+          # Проверяем, нет ли в коде запрещенного слова "HACK"
+          if grep -rnw . -e "HACK"; then
+            echo "❌ Ошибка: Найдено запрещенное слово 'HACK'!"
+            exit 1
+          fi
+          echo "✅ Код чист, проверки пройдены!"
