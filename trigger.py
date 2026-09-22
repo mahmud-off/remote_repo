@@ -1,1 +1,1 @@
-GITHUB_TOKEN = "ghp_aB3dE5gH7jK9mN1pQ3sT5vW7xY9zA1bC3dE5"
+убрал
