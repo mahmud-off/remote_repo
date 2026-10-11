@@ -39,17 +39,44 @@
       border-radius: 8px;
       cursor: pointer;
     }
+    #logsBtn {
+      background: none;
+      border: 1px solid #89b4fa;
+      color: #89b4fa;
+      padding: 8px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #logs {
+      width: 90%;
+      max-width: 600px;
+      max-height: 250px;
+      overflow-y: auto;
+      background: #11111b;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 0.8rem;
+      white-space: pre-wrap;
+      display: none;
+    }
   </style>
 </head>
 <body>
   <h1>Тапалка</h1>
   <div id="score">0</div>
   <button id="tapBtn">ТАП!</button>
-  <button id="resetBtn">Сброс</button>
+  <div>
+    <button id="resetBtn">Сброс</button>
+    <button id="logsBtn">Логи</button>
+  </div>
+  <pre id="logs"></pre>
 
   <script>
     const API = "http://localhost:8080";
     const scoreEl = document.getElementById("score");
+    const logsEl = document.getElementById("logs");
 
     async function loadScore() {
       try {
@@ -75,8 +102,23 @@
       } catch (e) { console.error(e); }
     }
 
+    async function showLogs() {
+      if (logsEl.style.display === "block") {
+        logsEl.style.display = "none";
+        return;
+      }
+      try {
+        const r = await fetch(API + "/logs");
+        const data = await r.json();
+        logsEl.textContent = data.join("\n");
+        logsEl.scrollTop = logsEl.scrollHeight;
+        logsEl.style.display = "block";
+      } catch (e) { console.error(e); }
+    }
+
     document.getElementById("tapBtn").addEventListener("click", tap);
     document.getElementById("resetBtn").addEventListener("click", reset);
+    document.getElementById("logsBtn").addEventListener("click", showLogs);
     loadScore();
   </script>
 </body>
