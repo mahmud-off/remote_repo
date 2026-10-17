@@ -104,6 +104,41 @@ grep -nE "zlib.h|compress|gz" vulnerable/src/main.cpp                        # z
 
 ## Эквивалент для Windows / MSVC (из исходного плана)
 
+### Сборка и запуск (PowerShell)
+
+```powershell
+cmake -S vulnerable -B build\vulnerable -G "Visual Studio 17 2022" -A x64
+cmake --build build\vulnerable --config Release
+.\build\vulnerable\Release\textzip.exe samples\sample.txt out_vulnerable.z
+"hello stdin" | .\build\vulnerable\Release\textzip.exe - out_stdin.z
+
+cmake -S fixed -B build\fixed -G "Visual Studio 17 2022" -A x64
+cmake --build build\fixed --config Release
+.\build\fixed\Release\textzip.exe samples\sample.txt out_fixed.z
+"hello fixed stdin" | .\build\fixed\Release\textzip.exe - out_fixed_stdin.z
+```
+
+Примечание: в уязвимом `main.cpp` команда инъекции выбирается по платформе
+(`type` на Windows, `cat` на Unix), поэтому сборка и запуск работают в обоих
+окружениях; логика уязвимости (CWE-78) не изменилась. Готовые конфигурации
+запуска (F5) и задачи SAST настроены в `.vscode/launch.json` и `.vscode/tasks.json`.
+
+### Cppcheck (Windows)
+
+```powershell
+cppcheck --enable=all --std=c++17 --language=c++ --inline-suppr --template=gcc --suppress=missingIncludeSystem --force -I vulnerable\src -I vulnerable\third_party\zlib-1.2.11 vulnerable\src 2>&1 | Tee-Object -FilePath reports\vulnerable\cppcheck.txt
+cppcheck --enable=all --std=c++17 --language=c++ --inline-suppr --template=gcc --suppress=missingIncludeSystem --force -I fixed\src -I fixed\third_party\zlib-1.3.1 fixed\src 2>&1 | Tee-Object -FilePath reports\fixed\cppcheck.txt
+```
+
+### Flawfinder (Windows)
+
+```powershell
+python -m flawfinder --minlevel=1 vulnerable\src 2>&1 | Tee-Object -FilePath reports\vulnerable\flawfinder.txt
+python -m flawfinder --minlevel=1 fixed\src 2>&1 | Tee-Object -FilePath reports\fixed\flawfinder.txt
+```
+
+### MSVC Code Analysis (`cl /analyze`, только Developer PowerShell for VS 2022)
+
 ```powershell
 cl /nologo /std:c++17 /EHsc /c /I vulnerable\src /I vulnerable\third_party\zlib-1.2.11 `
    /D_CRT_SECURE_NO_WARNINGS /analyze /analyze:log reports\vulnerable\msvc-sast.xml `

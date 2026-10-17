@@ -8,7 +8,7 @@ vulnerable/src/main.cpp:54:  [4] (buffer) strcpy:
   Does not check for buffer overflows when copying to destination [MS-banned]
   (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy
   easily misused).
-vulnerable/src/main.cpp:84:  [4] (shell) system:
+vulnerable/src/main.cpp:91:  [4] (shell) system:
   This causes a new program to execute and is difficult to use safely
   (CWE-78). try using a library call that implements the same functionality
   if available.
@@ -21,11 +21,11 @@ vulnerable/src/main.cpp:50:  [2] (buffer) char:
 ANALYSIS SUMMARY:
 
 Hits = 3
-Lines analyzed = 88 in approximately 0.01 seconds (17183 lines/second)
-Physical Source Lines of Code (SLOC) = 61
+Lines analyzed = 95 in approximately 0.01 seconds (18683 lines/second)
+Physical Source Lines of Code (SLOC) = 66
 Hits@level = [0]   0 [1]   0 [2]   1 [3]   0 [4]   2 [5]   0
 Hits@level+ = [0+]   3 [1+]   3 [2+]   3 [3+]   2 [4+]   2 [5+]   0
-Hits/KSLOC@level+ = [0+] 49.1803 [1+] 49.1803 [2+] 49.1803 [3+] 32.7869 [4+] 32.7869 [5+]   0
+Hits/KSLOC@level+ = [0+] 45.4545 [1+] 45.4545 [2+] 45.4545 [3+] 30.303 [4+] 30.303 [5+]   0
 Minimum risk level = 1
 
 Not every hit is necessarily a security vulnerability.

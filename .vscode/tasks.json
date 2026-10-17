@@ -1,0 +1,168 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "CMake: configure vulnerable",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "-S", "vulnerable",
+                "-B", "build/vulnerable",
+                "-G", "Visual Studio 17 2022",
+                "-A", "x64"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": []
+        },
+        {
+            "label": "CMake: build vulnerable (Release)",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build", "build/vulnerable",
+                "--config", "Release"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "group": { "kind": "build", "isDefault": true },
+            "problemMatcher": []
+        },
+        {
+            "label": "CMake: configure fixed",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "-S", "fixed",
+                "-B", "build/fixed",
+                "-G", "Visual Studio 17 2022",
+                "-A", "x64"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": []
+        },
+        {
+            "label": "CMake: build fixed (Release)",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build", "build/fixed",
+                "--config", "Release"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            // ============ SAST: vulnerable ============
+            "label": "SAST (vulnerable): cppcheck",
+            "type": "shell",
+            "command": "cppcheck",
+            "args": [
+                "--enable=all", "--std=c++17", "--language=c++",
+                "--inline-suppr", "--template=gcc",
+                "--suppress=missingIncludeSystem", "--force",
+                "-I", "vulnerable/src",
+                "-I", "vulnerable/third_party/zlib-1.2.11",
+                "vulnerable/src"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": {
+                "owner": "cppcheck",
+                "fileLocation": ["relative", "${workspaceFolder}"],
+                "pattern": {
+                    "regexp": "^(.*?):(\\d+):(\\d+): (error|warning|style|information): (.*)$",
+                    "file": 1, "line": 2, "column": 3, "severity": 4, "message": 5
+                }
+            }
+        },
+        {
+            "label": "SAST (vulnerable): MSVC cl /analyze",
+            "type": "shell",
+            "command": "cl",
+            "args": [
+                "/nologo", "/std:c++17", "/EHsc", "/c",
+                "/I", "vulnerable/src",
+                "/I", "vulnerable/third_party/zlib-1.2.11",
+                "/D_CRT_SECURE_NO_WARNINGS",
+                "/analyze", "/analyze:log", "reports/vulnerable/msvc-sast.xml",
+                "vulnerable/src/main.cpp"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            // cl доступен только в Developer Prompt; см. инструкции в README
+            "problemMatcher": []
+        },
+        {
+            "label": "SAST (vulnerable): flawfinder",
+            "type": "shell",
+            "command": "python",
+            "args": ["-m", "flawfinder", "--minlevel=1", "vulnerable/src"],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": []
+        },
+        {
+            "label": "SAST (vulnerable): run all",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "SAST (vulnerable): cppcheck",
+                "SAST (vulnerable): MSVC cl /analyze",
+                "SAST (vulnerable): flawfinder"
+            ],
+            "problemMatcher": []
+        },
+        {
+            // ============ SAST: fixed ============
+            "label": "SAST (fixed): cppcheck",
+            "type": "shell",
+            "command": "cppcheck",
+            "args": [
+                "--enable=all", "--std=c++17", "--language=c++",
+                "--inline-suppr", "--template=gcc",
+                "--suppress=missingIncludeSystem", "--force",
+                "-I", "fixed/src",
+                "-I", "fixed/third_party/zlib-1.3.1",
+                "fixed/src"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": {
+                "owner": "cppcheck",
+                "fileLocation": ["relative", "${workspaceFolder}"],
+                "pattern": {
+                    "regexp": "^(.*?):(\\d+):(\\d+): (error|warning|style|information): (.*)$",
+                    "file": 1, "line": 2, "column": 3, "severity": 4, "message": 5
+                }
+            }
+        },
+        {
+            "label": "SAST (fixed): MSVC cl /analyze",
+            "type": "shell",
+            "command": "cl",
+            "args": [
+                "/nologo", "/std:c++17", "/EHsc", "/c",
+                "/I", "fixed/src",
+                "/I", "fixed/third_party/zlib-1.3.1",
+                "/D_CRT_SECURE_NO_WARNINGS",
+                "/analyze", "/analyze:log", "reports/fixed/msvc-sast.xml",
+                "fixed/src/main.cpp"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": []
+        },
+        {
+            "label": "SAST (fixed): flawfinder",
+            "type": "shell",
+            "command": "python",
+            "args": ["-m", "flawfinder", "--minlevel=1", "fixed/src"],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": []
+        },
+        {
+            "label": "SAST (fixed): run all",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "SAST (fixed): cppcheck",
+                "SAST (fixed): MSVC cl /analyze",
+                "SAST (fixed): flawfinder"
+            ],
+            "problemMatcher": []
+        }
+    ]
+}

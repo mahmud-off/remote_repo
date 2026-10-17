@@ -80,8 +80,15 @@ int main(int argc, char* argv[]) {
 
     // 5. INTENTIONAL SECURITY BUG FOR LAB (OS command injection, CWE-78):
     //    склеиваем имя входного файла с командой ОС без экранирования.
+    //    Команда выбирается по платформе: Windows — "type", Unix — "cat",
+    //    чтобы код собирался и запускался в любом окружении.
     if (input_path != "-") {
-        std::system(("type " + input_path).c_str()); // no sanitization on purpose
+#if defined(_WIN32)
+        const char* show_cmd = "type ";
+#else
+        const char* show_cmd = "cat ";
+#endif
+        std::system((std::string(show_cmd) + "\"" + input_path + "\"").c_str()); // no sanitization of the path itself on purpose
     }
 
     return 0;
