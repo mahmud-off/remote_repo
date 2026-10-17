@@ -2,17 +2,14 @@
     "version": "2.0.0",
     "configurations": [
         {
-            // Запуск уязвимой версии (Windows/MSVC): сборка vulnerable/
             "name": "textzip: vulnerable (file input)",
             "type": "cppvsdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/vulnerable/Release/textzip.exe",
             "args": ["samples/sample.txt", "out_vulnerable.z"],
-            "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
-            "environment": [],
             "console": "integratedTerminal",
-            "preLaunchTask": "CMake: build vulnerable (Release)"
+            "preLaunchTask": "CMake: build vulnerable"
         },
         {
             "name": "textzip: vulnerable (stdin)",
@@ -20,22 +17,19 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/vulnerable/Release/textzip.exe",
             "args": ["-", "out_stdin.z"],
-            "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
-            "preLaunchTask": "CMake: build vulnerable (Release)"
+            "preLaunchTask": "CMake: build vulnerable"
         },
         {
-            // Запуск исправленной версии (Windows/MSVC): сборка fixed/
             "name": "textzip: fixed (file input)",
             "type": "cppvsdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/fixed/Release/textzip.exe",
             "args": ["samples/sample.txt", "out_fixed.z"],
-            "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
-            "preLaunchTask": "CMake: build fixed (Release)"
+            "preLaunchTask": "CMake: build fixed"
         },
         {
             "name": "textzip: fixed (stdin)",
@@ -43,10 +37,19 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/fixed/Release/textzip.exe",
             "args": ["-", "out_fixed_stdin.z"],
-            "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
-            "preLaunchTask": "CMake: build fixed (Release)"
+            "preLaunchTask": "CMake: build fixed"
+        },
+        {
+            "name": "(GCC/Linux) textzip: vulnerable",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/vulnerable/textzip",
+            "args": ["samples/sample.txt", "out_vulnerable.z"],
+            "cwd": "${workspaceFolder}",
+            "MIMode": "gdb",
+            "preLaunchTask": "CMake: build vulnerable"
         }
     ]
 }

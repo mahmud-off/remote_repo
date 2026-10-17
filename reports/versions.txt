@@ -1,24 +1,12 @@
-=== Tool versions (captured 2026-10-17) ===
+# Версии инструментов (зафиксированы в среде сборки отчётов, Linux-контейнер)
 
---- Cppcheck ---
+Дата: 2026-10-17
+
 Cppcheck 2.10
 
---- Flawfinder ---
-2.0.20
-
---- Clang Static Analyzer ---
 Debian clang version 14.0.6
 
---- GCC (для сборки, не SAST) ---
-gcc (Debian 12.2.0-14+deb12u1) 12.2.0
+2.0.20
 
---- CMake ---
 cmake version 3.25.1
-
---- Python ---
-Python 3.12.10
-
---- zlib vulnerable ---
-#define ZLIB_VERSION "1.2.11"
---- zlib fixed ---
-#define ZLIB_VERSION "1.3.1"
+g++ (Debian 12.2.0-14+deb12u1) 12.2.0

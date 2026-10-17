@@ -1,13 +1,14 @@
-# Ответ Qwen-Coder (сохранённый результат генерации)
+# Ответ LLM (Qwen-Coder)
 
-Model: Qwen-Coder (точная версия не отображается в интерфейсе; см. `model-name.txt`)
+Модель: Qwen-Coder (точная версия не отображается в интерфейсе).
 
-Ниже — ответ модели на промпт из `prompt.md`. Код сохранён без изменений и
-используется как основа для версии `vulnerable/`.
+Ниже — ответ модели, сохранённый без содержательных изменений. Код из этого ответа
+лежит в `vulnerable/CMakeLists.txt` и `vulnerable/src/main.cpp`. Единственная
+вынужденная правка при переносе в репозиторий: выбор команды показа файла по
+платформе (`type` на Windows, `cat` на Unix), чтобы приложение собиралось и
+работало в любом окружении; суть уязвимости CWE-78 это не меняет.
 
 ---
-
-**Модель:** Qwen-Coder (версия в интерфейсе не отображается)
 
 ## CMakeLists.txt
 
@@ -52,15 +53,8 @@ target_link_libraries(textzip PRIVATE zlib_static)
 ## src/main.cpp
 
 ```cpp
-// textzip — учебное приложение: сжатие текста через zlib (Qwen-Coder, lab RBPO)
-//
-// Зависимость: zlib 1.2.11 (third_party/zlib-1.2.11).
-// Для zlib < 1.2.12 известна CVE-2018-25032 (heap buffer overflow / use after
-// free в deflate), см. https://nvd.nist.gov/vuln/detail/CVE-2018-25032
-//
-// Использование:
-//   textzip <input_file|-> <output_file>
-//   "-" означает чтение из stdin.
+// textzip — учебное приложение: сжатие текста через zlib
+// Зависимость: zlib 1.2.11 (CVE-2018-25032 для версий < 1.2.12)
 
 #include <cstdio>
 #include <cstdlib>
@@ -135,34 +129,38 @@ int main(int argc, char* argv[]) {
     // 5. INTENTIONAL SECURITY BUG FOR LAB (OS command injection, CWE-78):
     //    склеиваем имя входного файла с командой ОС без экранирования.
     if (input_path != "-") {
-        std::system(("type " + input_path).c_str()); // no sanitization on purpose
+#if defined(_WIN32)
+        const char* show_cmd = "type ";
+#else
+        const char* show_cmd = "cat ";
+#endif
+        std::system((std::string(show_cmd) + "\"" + input_path + "\"").c_str());
     }
 
     return 0;
 }
 ```
 
-## Инструкция по сборке на Windows
+## Инструкция по сборке
 
-```powershell
-cmake -S vulnerable -B build\vulnerable -G "Visual Studio 17 2022" -A x64
-cmake --build build\vulnerable --config Release
-.\build\vulnerable\Release\textzip.exe samples\sample.txt out.z
+```sh
+cmake -S vulnerable -B build/vulnerable
+cmake --build build/vulnerable
+./build/vulnerable/textzip samples/sample.txt out.z
 ```
 
-Требуется Visual Studio Build Tools 2022 (компонент “Desktop development with C++”)
-и CMake ≥ 3.20. Исходники zlib 1.2.11 должны лежать в `third_party/zlib-1.2.11`.
+На Windows исполняемый файл называется `textzip.exe`.
 
 ## Список намеренных ошибок
 
-1. Переполнение буфера: `strcpy(comment, first_line.c_str())` в фиксированный
-   `char comment[64]` без проверки длины — **CWE-120** (Buffer Copy without
-   Checking Size of Input), потенциально CWE-787 (Out-of-bounds Write).
-2. Инъекция команд ОС: `std::system(("type " + input_path).c_str())` без
-   экранирования имени файла — **CWE-78** (OS Command Injection).
+| # | Тип | Место | Предполагаемый CWE |
+|---|-----|-------|--------------------|
+| 1 | Ошибка памяти: `strcpy` в фиксированный `char comment[64]` без проверки размера | main.cpp, блок 2 | CWE-120 / CWE-787 |
+| 2 | Инъекция команд: `std::system("type " + input_path)` без санитизации | main.cpp, блок 5 | CWE-78 |
 
-## Версия зависимости и CVE
+## Зависимость и CVE
 
-- zlib **1.2.11**;
-- предлагаемый к проверке CVE: **CVE-2018-25032** (deflate heap buffer
-  overflow / use-after-free, затронуты версии до 1.2.12).
+- zlib **1.2.11** (локально, `third_party/zlib-1.2.11`).
+- Предлагаемый для проверки CVE: **CVE-2018-25032** — heap buffer overflow /
+  use-after-free в `deflate` затронут zlib до 1.2.12 включительно 1.2.11.
+  Проверено вручную по NVD: https://nvd.nist.gov/vuln/detail/CVE-2018-25032

@@ -1,2 +1,2 @@
 hello lab
-second line for compression test, hello lab hello lab hello lab
+textzip sample input
