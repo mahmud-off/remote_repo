@@ -107,7 +107,13 @@ python -m flawfinder --version
 
 Вариант А — команды в терминале:
 
+⚠️ Если папка `build\vulnerable` (или `build\fixed`) уже создавалась ранее с
+ДРУГИМ генератором (например, по умолчанию получился «NMake Makefiles»), CMake
+сообщит `Does not match the generator used previously`. В этом случае сначала
+удалите старый кэш сборки и конфигурируйте заново:
+
 ```powershell
+Remove-Item -Recurse -Force build   # или просто build\vulnerable и build\fixed
 cmake -S vulnerable -B build/vulnerable -G "Visual Studio 17 2022" -A x64
 cmake --build build/vulnerable --config Release
 
@@ -168,6 +174,7 @@ cmake --build build/fixed --config Release
 |---|---|
 | `cmake : Имя "cmake" не распознано...` | CMake не установлен или не в PATH. Установите `winget install Kitware.CMake` и перезапустите VS Code, либо работайте в Developer PowerShell. |
 | `Running 'nmake' '-?' failed with: no such file or directory` | Нет компилятора C++. Установите Build Tools 2022 (workload «Desktop development with C++») и указывайте генератор явно: `-G "Visual Studio 17 2022" -A x64`. |
+| `Error: generator : Visual Studio 17 2022 ... Does not match the generator used previously: NMake Makefiles` | Папка `build\...` уже была сконфигурирована другим генератором. Удалите кэш: `Remove-Item -Recurse -Force build`, затем конфигурируйте заново с нужным `-G`. Генератор нельзя менять в существующей папке сборки — только с чистой. |
 | `cl` не находится в терминале | Обычный PowerShell не содержит среду MSVC. Используйте Developer PowerShell for VS 2022. |
 | `./build/.../textzip: не распознано` | В PowerShell уберите `./`, добавьте `.exe` и обратные слэши: `.\build\vulnerable\Release\textzip.exe`. |
 | `printf` не найден | Это Unix-команда. В PowerShell: `"текст" \| ...textzip.exe - out.z`. |
