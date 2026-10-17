@@ -178,7 +178,8 @@ cmake --build build/fixed --config Release
 | `cl` не находится в терминале | Обычный PowerShell не содержит среду MSVC. Используйте Developer PowerShell for VS 2022. |
 | `./build/.../textzip: не распознано` | В PowerShell уберите `./`, добавьте `.exe` и обратные слэши: `.\build\vulnerable\Release\textzip.exe`. |
 | `printf` не найден | Это Unix-команда. В PowerShell: `"текст" \| ...textzip.exe - out.z`. |
-| Линтер в редакторе подчёркивает `<zlib.h>` красным | IntelliSense не знает include-путей. Добавьте в `.vscode/settings.json`: `"C_Cpp.default.compileCommands": "${workspaceFolder}/build/vulnerable/compile_commands.json"` (для этого конфигурируйте с `-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`) — на сборку и запуск это не влияет. |
+| Линтер в редакторе подчёркивает `<zlib.h>` красным | IntelliSense не знает include-путей. В репозитории уже добавлен `.vscode/c_cpp_properties.json` — там прописаны `vulnerable/third_party/zlib-1.2.11` и `fixed/third_party/zlib-1.3.1`. Если используете MinGW, выберите конфигурацию «Win32» и поменяйте `intelliSenseMode` на `windows-gcc-x64`. |
+| `fatal error: zlib.h: No such file or directory` при сборке через CMake Tools / «Build C++ File» / Ctrl+F5 | zlib **не нужно устанавливать отдельно** — её исходники лежат в `third_party/`, а путь к ним добавляет CMake. Ошибка означает, что файл компилируется напрямую (`g++ main.cpp`), минуя CMake. Собирайте проект только через CMake: задачи VS Code (`Ctrl+Shift+B` → «CMake: build vulnerable (Release)») или команды из раздела «Шаг 3». Отдельно установленная системная zlib (vcpkg `zlib:x64-windows`, `zlib1g-dev` и т.п.) для этой лабораторной **не требуется**. |
 
 ## Сборка и запуск
 
