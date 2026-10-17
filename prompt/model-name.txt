@@ -1,0 +1,4 @@
+Model: Qwen-Coder
+Точная версия модели не отображается в интерфейсе.
+Date: 2026-10-17
+Used in: лабораторная работа РБПО (промпт — prompt/prompt.md, ответ — prompt/qwen-output.md)
