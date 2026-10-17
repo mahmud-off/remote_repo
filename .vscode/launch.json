@@ -1,0 +1,55 @@
+{
+    "version": "2.0.0",
+    "configurations": [
+        {
+            "name": "textzip: vulnerable (file input)",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/vulnerable/Release/textzip.exe",
+            "args": ["samples/sample.txt", "out_vulnerable.z"],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "preLaunchTask": "CMake: build vulnerable"
+        },
+        {
+            "name": "textzip: vulnerable (stdin)",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/vulnerable/Release/textzip.exe",
+            "args": ["-", "out_stdin.z"],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "preLaunchTask": "CMake: build vulnerable"
+        },
+        {
+            "name": "textzip: fixed (file input)",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/fixed/Release/textzip.exe",
+            "args": ["samples/sample.txt", "out_fixed.z"],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "preLaunchTask": "CMake: build fixed"
+        },
+        {
+            "name": "textzip: fixed (stdin)",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/fixed/Release/textzip.exe",
+            "args": ["-", "out_fixed_stdin.z"],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "preLaunchTask": "CMake: build fixed"
+        },
+        {
+            "name": "(GCC/Linux) textzip: vulnerable",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/vulnerable/textzip",
+            "args": ["samples/sample.txt", "out_vulnerable.z"],
+            "cwd": "${workspaceFolder}",
+            "MIMode": "gdb",
+            "preLaunchTask": "CMake: build vulnerable"
+        }
+    ]
+}

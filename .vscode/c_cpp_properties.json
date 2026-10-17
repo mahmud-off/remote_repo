@@ -1,0 +1,27 @@
+{
+    "configurations": [
+        {
+            "name": "Win32 (vulnerable)",
+            "includePath": [
+                "${workspaceFolder}/vulnerable/src",
+                "${workspaceFolder}/vulnerable/third_party/zlib-1.2.11"
+            ],
+            "defines": ["_WIN32", "_CRT_SECURE_NO_WARNINGS"],
+            "cStandard": "c99",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-msvc-x64"
+        },
+        {
+            "name": "Win32 (fixed)",
+            "includePath": [
+                "${workspaceFolder}/fixed/src",
+                "${workspaceFolder}/fixed/third_party/zlib-1.3.1"
+            ],
+            "defines": ["_WIN32", "_CRT_SECURE_NO_WARNINGS"],
+            "cStandard": "c99",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-msvc-x64"
+        }
+    ],
+    "version": 4
+}

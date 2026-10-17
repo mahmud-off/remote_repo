@@ -1,0 +1,4 @@
+Model: Qwen-Coder
+Точная версия модели не отображается в интерфейсе (GitHub Copilot Chat / веб-интерфейс Qwen).
+Date: 2026-10-17
+Used in: GitHub repo https://github.com/mahmud-off/remote_repo, branch branch_for_rbpo
